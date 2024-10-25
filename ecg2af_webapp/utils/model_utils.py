@@ -1,5 +1,8 @@
 import numpy as np
 import h5py
+import sys
+
+sys.path.append("/app/ml4h")
 from tensorflow.keras.models import load_model
 from ml4h.models.model_factory import get_custom_objects
 from ml4h.tensormap.ukb.survival import mgb_afib_wrt_instance2

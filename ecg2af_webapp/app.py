@@ -3,7 +3,7 @@ import numpy as np
 import os
 import pandas as pd
 import plotly.express as px
-from .utils.model_utils import load_ecg2af_model, ecg_as_tensor, process_predictions
+from utils.model_utils import load_ecg2af_model, ecg_as_tensor, process_predictions
 
 MODEL_PATH = '/app/ml4h/model_zoo/ECG2AF/ecg_5000_survival_curve_af_quadruple_task_mgh_v2021_05_21.h5'
 
