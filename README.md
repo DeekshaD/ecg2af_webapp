@@ -5,6 +5,7 @@
 - Git with LFS (Large File Storage) support
 - Docker
 - Internet connection to pull Docker images and dependencies
+- Linux based Operating system
 
 ## Setup and Running Instructions
 
@@ -13,12 +14,6 @@
 ```bash
 # For Ubuntu/Debian
 sudo apt-get install git-lfs
-
-# For macOS using Homebrew
-brew install git-lfs
-
-# For Windows using Chocolatey
-choco install git-lfs
 ```
 
 After installation, initialize Git LFS:
@@ -26,17 +21,20 @@ After installation, initialize Git LFS:
 git lfs install
 ```
 
-### 2. Set up ML4H Repository for Required Libraries
+
+### 2. Clone the Application Repository
+```bash
+git clone https://github.com/DeekshaD/ecg2af_webapp.git
+cd ecg2af_webapp
+```
+
+
+### 3. Set up ML4H Repository for Required Libraries
 ```bash
 git clone https://github.com/broadinstitute/ml4h.git
 git lfs pull --include model_zoo/ECG2AF/ecg_5000_survival_curve_af_quadruple_task_mgh_v2021_05_21.h5
 ```
 
-### 3. Clone the Application Repository
-```bash
-git clone https://github.com/DeekshaD/ecg2af_webapp.git
-cd ecg2af_webapp
-```
 
 ### 4. Pull the Base Docker Image
 ```bash
@@ -88,109 +86,16 @@ The web application provides a clean, intuitive interface with the following ele
 
 ## Framework Choice: Streamlit
 
-Streamlit was chosen as the web framework for several reasons:
-
-1. **Rapid Development**:
-   - Built-in components for file uploading and data visualization
-   - Simple Python-first approach requiring minimal frontend code
-   - Quick prototyping capabilities
-
-2. **ML/Data Science Integration**:
-   - Native support for data science libraries (Pandas, NumPy)
-   - Seamless integration with Plotly for interactive visualizations
-   - Built-in caching mechanisms for model loading
-
-3. **User Experience**:
-   - Automatic responsive design
-   - Real-time updates without page refreshes
-   - Clean, modern UI out of the box
-
-4. **Deployment Simplicity**:
-   - Single command deployment
-   - Built-in development server
-   - Docker-friendly architecture
+Streamlit was chosen for the ECG analysis web app because it's specifically designed for machine learning applications and requires minimal frontend development. It comes with built-in components for file uploads and data visualization, integrates smoothly with Python ML libraries, and provides a clean, professional interface out of the box. 
 
 ## Scaling Solution for 10,000 ECGs
 
-To scale the application for processing 10,000 ECGs, here's a detailed technical architecture:
+For scaling the ECG2AF web application to handle 10,000 ECGs and multiple users, there are two practical approaches using AWS services.
 
-### 1. Infrastructure Components
+The first approach leverages AWS EC2 instances with AWS Elastic Load Balancing. In this setup, multiple EC2 instances would host the Streamlit application, with an Application Load Balancer distributing incoming traffic across these instances. The EC2 instances can be part of an Auto Scaling group that automatically adjusts the number of instances based on demand. This solution provides fine-grained control over the infrastructure and allows for custom configuration of each instance, though it requires more manual management of the underlying infrastructure.
 
-1. **Load Balancer**:
-   - Use AWS ELastic load balancing
-   - Implement health checks and automatic scaling policies
-   - Configure SSL/TLS termination
+The second approach utilizes AWS Fargate with Amazon Elastic Container Service (ECS). This serverless solution involves uploading our Docker container to Amazon ECR (Elastic Container Registry) and letting Fargate handle the underlying infrastructure. Fargate automatically manages the provisioning and scaling of the virtual machines, networking, and other resources needed to run our containerized application.In this solution AWS manages the infrastructure, the trade-off is less direct control over the underlying infrastructure, but this is often outweighed by the reduced maintenance burden and improved deployment simplicity.
 
-2. **Web Server Layer**:
-   - Deploy multiple Streamlit instances behind the load balancer
-   - Use Kubernetes for container orchestration
-   - Implement auto-scaling based on CPU/memory metrics
+## AI tools
 
-3. **Queue System**:
-   - Implement Apache Kafka or RabbitMQ for message queuing
-   - Configure separate queues for different processing stages
-   - Implement dead letter queues for failed processing
-
-4. **Processing Layer**:
-   - Deploy worker nodes using Kubernetes StatefulSets
-   - Implement batch processing for multiple ECGs
-   - Use GPU instances for model inference (if needed)
-
-### 2. Storage Solutions
-
-1. **Object Storage**:
-   - Store uploaded ECG files in S3 or Google Cloud Storage
-   - Implement lifecycle policies for data retention
-   - Use CDN for faster file delivery
-
-2. **Results Database**:
-   - Use MongoDB for storing prediction results
-   - Implement sharding for horizontal scaling
-   - Set up replica sets for high availability
-
-### 3. Monitoring and Logging
-
-1. **Metrics Collection**:
-   - Use Prometheus for metrics collection
-   - Set up Grafana dashboards for visualization
-   - Monitor key performance indicators:
-     - Processing time per ECG
-     - Queue lengths
-     - Error rates
-     - Resource utilization
-
-2. **Distributed Tracing**:
-   - Implement OpenTelemetry for request tracing
-   - Use Jaeger or Zipkin for visualization
-   - Track processing pipeline stages
-
-### 4. Error Handling
-
-1. **Retry Mechanism**:
-```python
-from tenacity import retry, stop_after_attempt, wait_exponential
-
-@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
-async def process_with_retry(ecg_file):
-    try:
-        return await process_single_ecg(ecg_file)
-    except Exception as e:
-        logger.error(f"Processing failed for {ecg_file}: {str(e)}")
-        raise
-```
-
-2. **Circuit Breaker**:
-```python
-from circuitbreaker import circuit
-
-@circuit(failure_threshold=5, recovery_timeout=60)
-async def protected_processing(ecg_file):
-    return await process_with_retry(ecg_file)
-```
-
-This architecture ensures:
-- High availability and fault tolerance
-- Horizontal scalability
-- Efficient resource utilization
-- Robust error handling and monitoring
-- Cost-effective processing of large ECG batches
+In developing the ECG2AF web application, I leveraged Claude, an AI assistant by Anthropic, to enhance development efficiency. Claude helped generate the initial structure of the Streamlit application and assisted with error handling patterns. I validate all AI-generated code, particularly ensuring proper integration with the ML4H libraries and correct handling of the ECG data tensors. 
