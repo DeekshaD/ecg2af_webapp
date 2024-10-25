@@ -52,17 +52,11 @@ docker run -p 8501:8501 ecg2af-webapp
 
 The application will be accessible at `http://localhost:8501`
 
-## Assumptions and Design Decisions
+## Data Processing Assumptions 
 
-1. **Data Processing**:
    - ECG data is properly formatted in HD5 files
    - ECG signals contain all 12 leads as specified
    - Data is normalized using mean centering and standard scaling
-
-2. **Result Display**:
-   - Age predictions are kept in normalized form
-   - Survival curve focuses on the most relevant probability range (0.7-1.0)
-   - Raw probabilities are displayed to 4 decimal places for precision
 
 ## Scaling Solution
 
