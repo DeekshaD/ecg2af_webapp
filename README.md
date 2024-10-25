@@ -52,26 +52,6 @@ docker run -p 8501:8501 ecg2af-webapp
 
 The application will be accessible at `http://localhost:8501`
 
-## User Interface Components
-
-The web application provides a clean, intuitive interface with the following elements:
-
-1. **Title Header**: "ECG2AF Model Web Application"
-
-2. **File Upload Section**: 
-   - File uploader component accepting .h5/.hd5 format files
-   - Clear instructions for file format requirements
-
-3. **Prediction Results Display**:
-   - AF Risk Score (numerical value between 0-1)
-   - Sex Prediction (probability for Male/Female - assumed 1st probability returned is for class 0 - Male)
-   - Age Prediction
-   - AF Classification (probability of AF presence/absence - assumed 1st probability returned is for class 0 - no AF)
-
-4. **Visualization Section**:
-   - Interactive survival curve plot showing AF probability over time
-   - Check box option to view raw survival data in tabular format
-
 ## Assumptions and Design Decisions
 
 1. **Data Processing**:
@@ -84,11 +64,7 @@ The web application provides a clean, intuitive interface with the following ele
    - Survival curve focuses on the most relevant probability range (0.7-1.0)
    - Raw probabilities are displayed to 4 decimal places for precision
 
-## Framework Choice: Streamlit
-
-Streamlit was chosen for the ECG analysis web app because it's specifically designed for machine learning applications and requires minimal frontend development. It comes with built-in components for file uploads and data visualization, integrates smoothly with Python ML libraries, and provides a clean, professional interface out of the box. 
-
-## Scaling Solution for 10,000 ECGs
+## Scaling Solution
 
 For scaling the ECG2AF web application to handle 10,000 ECGs and multiple users, there are two practical approaches using AWS services.
 
