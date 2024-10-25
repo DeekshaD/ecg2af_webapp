@@ -6,7 +6,7 @@ WORKDIR /app
 # Copy application code
 COPY ecg2af_webapp /app/ecg2af_webapp
 COPY requirements.txt /app/ecg2af_webapp/requirements.txt
-COPY ./ml4h /app/ml4h
+COPY ml4h /app/ml4h
 
 #install requirements
 RUN pip install -r /app/ecg2af_webapp/requirements.txt
